@@ -2857,7 +2857,8 @@ int parse_sibs(all_args_t* args_, rrc_cfg_t* rrc_cfg_, srsenb::phy_cfg_t* phy_co
   sib_type13_r9_s* sib13 = &rrc_cfg_->sibs[12].set_sib13_v920();
 
   // Add SIB14 parsing
-  sib_type14_s*    sib14 = &rrc_cfg_->sibs[13].set_sib14();
+  // sib_type14_s*    sib14 = &rrc_cfg_->sibs[13].set_sib14();
+   asn1::rrc::sib_type14_r11_s*    sib14 = &rrc_cfg_->sibs[13].set_sib14();
 
   sib_type1_s* sib1 = &rrc_cfg_->sib1;
   if (sib_sections::parse_sib1(args_->enb_files.sib_config, sib1) != SRSRAN_SUCCESS) {
