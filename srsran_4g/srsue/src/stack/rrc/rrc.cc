@@ -1412,13 +1412,13 @@ void rrc::parse_pdu_bcch_dlsch(unique_byte_buffer_t pdu)
           handle_sib13();
           si_acquirer.trigger(si_acquire_proc::sib_received_ev{});
           break;
-        case sib_info_item_c::types::sib14_v1130:
-          if (not meas_cells.serving_cell().has_sib14()) {
-            meas_cells.serving_cell().set_sib14(sib_list[i].sib14_v1130());
-          }
-          handle_sib14();
-          si_acquirer.trigger(si_acquire_proc::sib_received_ev{});
-          break;
+        // case sib_info_item_c::types::sib14_v1130:
+        //   if (not meas_cells.serving_cell().has_sib14()) {
+        //     meas_cells.serving_cell().set_sib14(sib_list[i].sib14_v1130());
+        //   }
+        //   handle_sib14();
+        //   si_acquirer.trigger(si_acquire_proc::sib_received_ev{});
+        //   break;
 
         default:
           logger.warning("SIB%d is not supported", get_sib_number(sib_list[i].type()));
@@ -1553,20 +1553,20 @@ void rrc::handle_sib13()
   add_mrb(0, 0); // Add MRB0
 }
 
-void rrc::handle_sib14()
-{
-  logger.info("SIB14 received");
+// void rrc::handle_sib14()
+// {
+//   logger.info("SIB14 received");
         
-  const sib_type14_r11_s* sib14 =meas_cells.serving_cell().sib14ptr();
+//   const sib_type14_r11_s* sib14 =meas_cells.serving_cell().sib14ptr();
 
-  phy->set_config_mbsfn_sib14(srsran::make_sib14(*sib14));
-  add_mrb(0, 0); // Add MRB0
+//   phy->set_config_mbsfn_sib14(srsran::make_sib14(*sib14));
+//   add_mrb(0, 0); // Add MRB0
         
-  // if (sib14 == nullptr){
-  //  logger.error("SIB14 pointer is null")
-  //  return;
-  // logger.warning("SIB14 handler is a stub. Implement logic to apply SIB14 configuration.");
-}
+//   // if (sib14 == nullptr){
+//   //  logger.error("SIB14 pointer is null")
+//   //  return;
+//   // logger.warning("SIB14 handler is a stub. Implement logic to apply SIB14 configuration.");
+// }
 
 
 /*******************************************************************************
