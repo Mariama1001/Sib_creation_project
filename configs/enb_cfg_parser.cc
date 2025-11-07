@@ -136,9 +136,9 @@ int field_sched_info::parse(libconfig::Setting& root)
                     sib_index);
             return SRSRAN_ERROR;
           }
-	  
-	  // We go to = 14 for SIB14
-          if (sib_index >= 3 && sib_index <= 14) {
+
+          // We go to <= 33 to find SIB-33
+          if (sib_index >= 3 && sib_index <= 33) {
             data->sched_info_list[i].sib_map_info[j].value = (sib_type_e::options)(sib_index - 3);
           } else {
             fprintf(stderr, "Invalid SIB index %d for si_mapping_info=%d in sched_info=%d\n", sib_index, j, i);
@@ -2328,7 +2328,7 @@ int parse_sib2(std::string filename, sib_type2_s* data)
   bcch_cnfg.add_field(
       make_asn1_enum_number_parser("modification_period_coeff", &rr_cfg_common->bcch_cfg.mod_period_coeff));
 
-  // PCCH configurationsib
+  // PCCH configuration
   parser::section pcch_cnfg("pcch_cnfg");
   rr_config.add_subsection(&pcch_cnfg);
   pcch_cnfg.add_field(
@@ -2353,7 +2353,7 @@ int parse_sib2(std::string filename, sib_type2_s* data)
   // PDSCH configuration
   parser::section pdsch_cnfg("pdsch_cnfg");
   rr_config.add_subsection(&pdsch_cnfg);
-  pdsch_cnfg.add_field(new parser::field<uint8_t>("p_b", &rr_cfg_common->pdsch_cfg_common.p_b));sib
+  pdsch_cnfg.add_field(new parser::field<uint8_t>("p_b", &rr_cfg_common->pdsch_cfg_common.p_b));
   pdsch_cnfg.add_field(new parser::field<int8_t>("rs_power", &rr_cfg_common->pdsch_cfg_common.ref_sig_pwr));
 
   // PUSCH configuration
@@ -2393,7 +2393,7 @@ int parse_sib2(std::string filename, sib_type2_s* data)
   rr_config.add_subsection(&ul_pwr_ctrl);
   ul_pwr_ctrl.add_field(
       new parser::field<int8>("p0_nominal_pusch", &rr_cfg_common->ul_pwr_ctrl_common.p0_nominal_pusch));
-  ul_pwr_ctrl.add_field(make_asn1_enum_number_parser("alpha", &rr_cfg_common->ul_pwr_ctrl_common.sibalpha));
+  ul_pwr_ctrl.add_field(make_asn1_enum_number_parser("alpha", &rr_cfg_common->ul_pwr_ctrl_common.alpha));
   ul_pwr_ctrl.add_field(
       new parser::field<int8>("p0_nominal_pucch", &rr_cfg_common->ul_pwr_ctrl_common.p0_nominal_pucch));
   ul_pwr_ctrl.add_field(
@@ -2443,7 +2443,7 @@ int parse_sib3(std::string filename, sib_type3_s* data)
   mob_params.add_field(make_asn1_enum_number_parser("t_hyst_normal", &resel_pars->mob_state_params.t_hyst_normal));
   mob_params.add_field(
       new parser::field<uint8>("n_cell_change_medium", &resel_pars->mob_state_params.n_cell_change_medium));
-  mob_params.add_field(sib
+  mob_params.add_field(
       new parser::field<uint8>("n_cell_change_high", &resel_pars->mob_state_params.n_cell_change_high));
 
   // CellReselectionServingFreqInfo
@@ -2577,7 +2577,7 @@ int parse_sib7(std::string filename, sib_type7_s* data)
 
   return parser::parse_section(std::move(filename), &sib7);
 }
-sib
+
 int parse_sib9(std::string filename, sib_type9_s* data)
 {
   parser::section sib9("sib9");
@@ -2829,18 +2829,18 @@ int parse_sib13(std::string filename, sib_type13_r9_s* data)
   return parser::parse_section(std::move(filename), &sib13);
 }
 
-// Define SIB14 fields
-int parse_sib14(std::string filename, sib_type14_s* data)
+// Define SIB-33 parsing function
+int parse_sib33(std::string filename, sib_type33_s* data)
 {
-  parser::section sib14("sib14");
+  parser::section sib33("sib33");
 
-  // Test fields for the new custom SIB14
-  sib14.add_field(new parser::field<int>("param1", &data->param1);
-  sib14.add_field(new parser::field<float>("param2", &data->param2);
-  sib14.add_field(new parser::field<std::string>("test_msg", &data->test_msg);
+  // Test fields for the new custom SIB-33
+  sib33.add_field(new parser::field<int>("param1", &data->param1));
+  sib33.add_field(new parser::field<float>("param2", &data->param2));
+  sib33.add_field(new parser::field<std::string>("test_msg", &data->test_msg));
 
   // Run parser with single section
-  return parser::parse_section(std::move(filename), &sib14);
+  return parser::parse_section(std::move(filename), &sib33);
 }
 
 int parse_sibs(all_args_t* args_, rrc_cfg_t* rrc_cfg_, srsenb::phy_cfg_t* phy_config_common)
@@ -2856,9 +2856,8 @@ int parse_sibs(all_args_t* args_, rrc_cfg_t* rrc_cfg_, srsenb::phy_cfg_t* phy_co
   sib_type10_s*    sib10 = &rrc_cfg_->sibs[9].set_sib10();
   sib_type13_r9_s* sib13 = &rrc_cfg_->sibs[12].set_sib13_v920();
 
-  // Add SIB14 parsing
-  // sib_type14_s*    sib14 = &rrc_cfg_->sibs[13].set_sib14();
-   asn1::rrc::sib_type14_r11_s*    sib14 = &rrc_cfg_->sibs[13].set_sib14();
+  // Add SIB-33 parsing
+  asn1::rrc::sib_type33_s*    sib33 = &rrc_cfg_->sibs[32].set_sib33();
 
   sib_type1_s* sib1 = &rrc_cfg_->sib1;
   if (sib_sections::parse_sib1(args_->enb_files.sib_config, sib1) != SRSRAN_SUCCESS) {
@@ -2982,19 +2981,18 @@ int parse_sibs(all_args_t* args_, rrc_cfg_t* rrc_cfg_, srsenb::phy_cfg_t* phy_co
       return SRSRAN_ERROR;
     }
 
+  // Generate SIB-33 if defined in mapping info.
+  if (sib_is_present(sib1->sched_info_list, sib_type_e::sib_type33)) {
+    if (sib_sections::parse_sib33(args_->enb_files.sib_config, sib33) != SRSRAN_SUCCESS) {
+      return SRSRAN_ERROR;
+    }
+
     // Activate CMAS paging indication.
     rrc_cfg_->cmas_present = true;
   }
 
   if (sib_is_present(sib1->sched_info_list, sib_type_e::sib_type13_v920)) {
     if (sib_sections::parse_sib13(args_->enb_files.sib_config, sib13) != SRSRAN_SUCCESS) {
-      return SRSRAN_ERROR;
-    }
-  }
-
-  // Generate SIB14 if defined in mapping info.
-  if (sib_is_present(sib1->sched_info_list, sib_type_e::sib_type14)) {
-    if (sib_sections::parse_sib14(args_->enb_files.sib_config, sib14) != SRSRAN_SUCCESS) {
       return SRSRAN_ERROR;
     }
   }
