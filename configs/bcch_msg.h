@@ -4282,6 +4282,7 @@ struct sib_info_item_c {
       sib30_v1700,
       sib31_v1700,
       sib32_v1700,
+      sib33,
       nulltype
     } value;
 
@@ -4600,6 +4601,12 @@ struct sib_info_item_c {
     assert_choice_type(types::sib32_v1700, type_, "sib-TypeAndInfo-item");
     return c.get<sib_type32_r17_s>();
   }
+  const sib_type33_s& sib33() const 
+  {
+    assert_choice_type(types::sib33, type_, "sib-TypeAndInfo-item");
+    return c.get<sib_type33_s>();
+  }
+
   sib_type2_s&       set_sib2();
   sib_type3_s&       set_sib3();
   sib_type4_s&       set_sib4();
@@ -4630,6 +4637,7 @@ struct sib_info_item_c {
   sib_type30_r17_s&  set_sib30_v1700();
   sib_type31_r17_s&  set_sib31_v1700();
   sib_type32_r17_s&  set_sib32_v1700();
+  sib_type33_s&      set_sib33();
 
 private:
   types type_;
@@ -4656,6 +4664,7 @@ private:
                   sib_type30_r17_s,
                   sib_type31_r17_s,
                   sib_type32_r17_s,
+                  sib_type33_s,
                   sib_type3_s,
                   sib_type4_s,
                   sib_type5_s,
