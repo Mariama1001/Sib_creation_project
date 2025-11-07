@@ -30,7 +30,7 @@ using srsran::srb_to_lcid;
 namespace srsue {
 
 const static uint32_t NOF_REQUIRED_SIBS                = 5;
-const static uint32_t required_sibs[NOF_REQUIRED_SIBS] = {0, 1, 2, 12, 13}; // SIB1, SIB2, SIB3 and SIB13 (eMBMS)
+const static uint32_t required_sibs[NOF_REQUIRED_SIBS] = {0, 1, 2, 12, 32}; // SIB1, SIB2, SIB3 and SIB13 (eMBMS)
 
 /*******************************************************************************
   Base functions
@@ -1412,14 +1412,15 @@ void rrc::parse_pdu_bcch_dlsch(unique_byte_buffer_t pdu)
           handle_sib13();
           si_acquirer.trigger(si_acquire_proc::sib_received_ev{});
           break;
-        case sib_info_item_c::types::sib14:
-          if (not meas_cells.serving_cell().has_sib14()) {
-            meas_cells.serving_cell().set_sib14(sib_list[i].sib14());
+        // ... (après case sib13_v920) ...
+        case sib_info_item_c::types::sib33: // MODIFIÉ
+           if (not meas_cells.serving_cell().has_sib33()) { // MODIFIÉ
+            meas_cells.serving_cell().set_sib33(sib_list[i].sib33()); // MODIFIÉ
           }
-          handle_sib14();
+          handle_sib33(); // MODIFIÉ
           si_acquirer.trigger(si_acquire_proc::sib_received_ev{});
           break;
-
+        
         default:
           logger.warning("SIB%d is not supported", get_sib_number(sib_list[i].type()));
       }
@@ -1553,16 +1554,24 @@ void rrc::handle_sib13()
   add_mrb(0, 0); // Add MRB0
 }
 
-void rrc::handle_sib14()
+void rrc::handle_sib33() // MODIFIÉ
 {
-  logger info("SIB14 received");
-        
-  const sib_type14_s* sib14 =meas_cells.serving_cell()
-        
-  if (sib14 ==nullptr){
-   logger.error("SIB14 pointer is null")
-   return;
-  logger.warning("SIB14 handler is a stub. Implement logic to apply SIB14 configuration.");
+  logger.info("SIB33 received"); // MODIFIÉ (et syntaxe corrigée)
+
+  // Récupère le SIB33 stocké (doit exister dans meas_cell_eutra)
+  const sib_type33_s* sib33 = meas_cells.serving_cell().sib33ptr(); // MODIFIÉ
+
+  if (sib33 == nullptr) { // MODIFIÉ
+    logger.error("SIB33 pointer is null, cannot apply configuration."); // MODIFIÉ 
+    return;
+  }
+
+  //
+  // C'est ici que vous implémentez la logique de SIB33.
+  // (par exemple, appeler phy->set_config_...)
+  //
+
+  logger.warning("SIB33 handler is a stub. Implement logic to apply SIB33 configuration."); // MODIFIÉ
 }
 
 
