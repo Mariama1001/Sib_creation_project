@@ -31,6 +31,7 @@
 #include "srsran/phy/common/phy_common.h"
 #include "srsran/rrc/rrc_common.h"
 #include <boost/algorithm/string.hpp>
+#include <cstdint>//sib11
 
 #define HANDLEPARSERCODE(cond)                                                                                         \
   do {                                                                                                                 \
@@ -2510,18 +2511,21 @@ int parse_sib4(std::string filename, sib_type4_s* data)
 }
 
 //SIB11
-int parse_sib11(std::string filename, sib_type11_s* data)  
-{  
-  parser::section sib11("sib11");  
-    
-  // Add fields according to SIB11 structure in 3GPP TS 36.331  
-  // SIB11 contains ETWS primary notification parameters  
-  sib11.add_field(new parser::field<uint16_t>("message_identifier", &data->msg_id));  
-  sib11.add_field(new parser::field<uint16_t>("serial_number", &data->serial_num));  
-  sib11.add_field(make_asn1_bitstring_number_parser("warning_message_segment", &data->warning_msg_segment));  
-    
-  return parser::parse_section(std::move(filename), &sib11);  
+int parse_sib11(const std::string& filename, asn1::rrc::sib_type11_s* data)
+{
+  srsran::parser::section sib11("sib11");
+
+  sib11.add_field(std::make_unique<srsran::parser::field<uint16_t>>(
+      "message_identifier", data->msg_id));
+  sib11.add_field(std::make_unique<srsran::parser::field<uint16_t>>(
+      "serial_number", data->serial_num));
+  sib11.add_field(
+      make_asn1_bitstring_number_parser("warning_message_segment",
+                                        data->warning_msg_segment));
+
+  return srsran::parser::parse_section(filename, &sib11);
 }
+
 // int parse_sib11(std::string filename, sib_type11_s* data)  
 // {  
 //   parser::section sib11("sib11");  
