@@ -2525,18 +2525,40 @@ int parse_sib4(std::string filename, sib_type4_s* data)
 
 //   return srsran::parser::parse_section(filename, &sib11);
 // }
-int parse_sib11(const std::string& filename, asn1::rrc::sib_type11_s* data)
-{
-  parser::section sib11("sib11");
-
-  sib11.add_field(new parser::field<uint16_t>("message_identifier", data->msg_id)); // 不要取地址
-  sib11.add_field(new parser::field<uint16_t>("serial_number",     data->serial_num));
-  sib11.add_field(
-      make_asn1_bitstring_number_parser("warning_message_segment",
-                                        data->warning_message_segment));
-
-  return parser::parse_section(filename, &sib11);
+int parse_sib11(std::string filename, sib_type11_s* data)  
+{  
+  parser::section sib11("sib11");  
+    
+  // Use bitstring parser for msg_id and serial_num (they are fixed_bitstring<16>)  
+  sib11.add_field(make_asn1_bitstring_number_parser("message_id", &data->msg_id));  
+  sib11.add_field(make_asn1_bitstring_number_parser("serial_number", &data->serial_num));  
+    
+  // Add enum for warning_msg_segment_type  
+  sib11.add_field(make_asn1_enum_str_parser("warning_message_segment_type", &data->warning_msg_segment_type));  
+    
+  // Add uint8_t for segment number  
+  sib11.add_field(new parser::field<uint8_t>("warning_message_segment_number", &data->warning_msg_segment_num));  
+    
+  // For octstring fields, you may need a custom parser or use string conversion  
+  // This depends on how you want to configure it in sib.conf  
+    
+  return parser::parse_section(std::move(filename), &sib11);  
 }
+
+// int parse_sib11(const std::string& filename, asn1::rrc::sib_type11_s* data)
+// {
+//   parser::section sib11("sib11");
+
+//   sib11.add_field(new parser::field<decltype(data->msg_id)>(
+//       "message_identifier", &data->msg_id));
+//   sib11.add_field(new parser::field<decltype(data->serial_num)>(
+//       "serial_number", &data->serial_num));
+//   sib11.add_field(make_asn1_bitstring_number_parser(
+//       "warning_message_segment", &data->warning_message_segment));
+
+//   return parser::parse_section(filename, &sib11);
+// }
+
 
 // int parse_sib11(std::string filename, sib_type11_s* data)  
 // {  
