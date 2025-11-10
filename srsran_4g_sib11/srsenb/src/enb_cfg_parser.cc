@@ -2511,19 +2511,31 @@ int parse_sib4(std::string filename, sib_type4_s* data)
 }
 
 //SIB11
+// int parse_sib11(const std::string& filename, asn1::rrc::sib_type11_s* data)
+// {
+//   parser::section sib11("sib11");
+
+//   sib11.add_field(std::make_unique<srsran::parser::field<uint16_t>>(
+//       "message_identifier", data->msg_id));
+//   sib11.add_field(std::make_unique<srsran::parser::field<uint16_t>>(
+//       "serial_number", data->serial_num));
+//   sib11.add_field(
+//       make_asn1_bitstring_number_parser("warning_message_segment",
+//                                         data->warning_msg_segment));
+
+//   return srsran::parser::parse_section(filename, &sib11);
+// }
 int parse_sib11(const std::string& filename, asn1::rrc::sib_type11_s* data)
 {
-  srsran::parser::section sib11("sib11");
+  parser::section sib11("sib11");
 
-  sib11.add_field(std::make_unique<srsran::parser::field<uint16_t>>(
-      "message_identifier", data->msg_id));
-  sib11.add_field(std::make_unique<srsran::parser::field<uint16_t>>(
-      "serial_number", data->serial_num));
+  sib11.add_field(new parser::field<uint16_t>("message_identifier", data->msg_id)); // 不要取地址
+  sib11.add_field(new parser::field<uint16_t>("serial_number",     data->serial_num));
   sib11.add_field(
       make_asn1_bitstring_number_parser("warning_message_segment",
-                                        data->warning_msg_segment));
+                                        data->warning_message_segment));
 
-  return srsran::parser::parse_section(filename, &sib11);
+  return parser::parse_section(filename, &sib11);
 }
 
 // int parse_sib11(std::string filename, sib_type11_s* data)  
