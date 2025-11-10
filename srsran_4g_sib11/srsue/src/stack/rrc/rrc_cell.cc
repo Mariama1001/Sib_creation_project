@@ -94,6 +94,13 @@ void meas_cell_eutra::set_sib13(const asn1::rrc::sib_type13_r9_s& sib13_)
   has_valid_sib13 = true;
 }
 
+//sib11
+void meas_cell_eutra::set_sib11(const asn1::rrc::sib_type11_s& sib11_)
+{
+  sib11 = sib11_;              // 保存内容
+  has_valid_sib11 = true;      // 置位（在 meas_cell 里新增的标志）
+}
+
 void meas_cell_nr::set_sib1(const asn1::rrc_nr::sib1_s& sib1_)
 {
   sib1           = sib1_;

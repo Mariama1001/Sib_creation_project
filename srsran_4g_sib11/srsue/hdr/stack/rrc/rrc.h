@@ -242,6 +242,7 @@ private:
   float              get_cell_rsrq_nr(const uint32_t arfcn_nr, const uint32_t pci_nr);
 
   void                                          process_cell_meas();
+  void                                          handle_sib11();//SIB11
   void                                          process_new_cell_meas(const std::vector<phy_meas_t>& meas);
   srsran::block_queue<std::vector<phy_meas_t> > cell_meas_q;
 

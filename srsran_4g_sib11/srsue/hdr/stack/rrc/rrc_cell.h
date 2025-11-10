@@ -83,6 +83,7 @@ public:
   bool has_sib1() const { return has_valid_sib1; }
   bool has_sib2() const { return has_valid_sib2; }
   bool has_sib3() const { return has_valid_sib3; }
+  bool has_sib11() const { return has_valid_sib11; }//sib11
   bool has_sib13() const { return has_valid_sib13; }
   bool has_sib(uint32_t index) const;
   bool has_sibs(srsran::span<const uint32_t> indexes) const;
@@ -94,6 +95,7 @@ public:
     has_valid_sib1  = false;
     has_valid_sib2  = false;
     has_valid_sib3  = false;
+    has_valid_sib11 = false;//sib11
     has_valid_sib13 = false;
   }
 
@@ -115,6 +117,7 @@ protected:
   bool                         has_valid_sib2  = false;
   bool                         has_valid_sib3  = false;
   bool                         has_valid_sib13 = false;
+  bool                         has_valid_sib11 = false;//sib11
   std::map<uint32_t, uint32_t> sib_info_map; ///< map of sib_index to index of schedInfoList in SIB1
 };
 
@@ -131,6 +134,7 @@ public:
   void set_sib1(const asn1::rrc_nr::sib1_s& sib1_);
   void set_sib2(const asn1::rrc_nr::sib2_s& sib2_);
   void set_sib3(const asn1::rrc_nr::sib3_s& sib3_);
+  void set_sib11(const asn1::rrc::sib_type11_s& sib11_);//sib11
 
   const asn1::rrc_nr::sib1_s* sib1ptr() const { return has_sib1() ? &sib1 : nullptr; }
 
@@ -160,11 +164,13 @@ public:
   void set_sib1(const asn1::rrc::sib_type1_s& sib1_);
   void set_sib2(const asn1::rrc::sib_type2_s& sib2_);
   void set_sib3(const asn1::rrc::sib_type3_s& sib3_);
+  void set_sib11(const asn1::rrc::sib_type11_s& sib11_);//sib11
   void set_sib13(const asn1::rrc::sib_type13_r9_s& sib13_);
 
   const asn1::rrc::sib_type1_s*     sib1ptr() const { return has_sib1() ? &sib1 : nullptr; }
   const asn1::rrc::sib_type2_s*     sib2ptr() const { return has_sib2() ? &sib2 : nullptr; }
   const asn1::rrc::sib_type3_s*     sib3ptr() const { return has_sib3() ? &sib3 : nullptr; }
+  const asn1::rrc::sib_type11_s*    sib11ptr() const { return has_sib11() ? &sib11 : nullptr; }//sib11
   const asn1::rrc::sib_type13_r9_s* sib13ptr() const { return has_sib13() ? &sib13 : nullptr; }
 
   uint32_t                  get_cell_id() const { return (uint32_t)sib1.cell_access_related_info.cell_id.to_number(); }
@@ -180,6 +186,7 @@ public:
   asn1::rrc::sib_type2_s     sib2     = {};
   asn1::rrc::sib_type3_s     sib3     = {};
   asn1::rrc::sib_type13_r9_s sib13    = {};
+  asn1::rrc::sib_type11_s    sib11    = {}; //sib11
   asn1::rrc::mcch_msg_s      mcch     = {};
 
 private:
