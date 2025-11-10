@@ -304,7 +304,20 @@ sib7 =
 
 sib11 =   
 {  
-    message_identifier = 4370;  // ETWS message identifier  
-    serial_number = 0;  
-    warning_message_segment = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";  
+    // Message identifier (16-bit bitstring) - ETWS message ID  
+    // For earthquake: 4370-4399, for tsunami: 4400-4479  
+    message_id = "0001000100010010";  // Example: 4370 in binary  
+      
+    // Serial number (16-bit bitstring)  
+    serial_number = "0000000000000000";  
+      
+    // Warning message segment type: "notLastSegment" or "lastSegment"  
+    warning_message_segment_type = "lastSegment";  
+      
+    // Warning message segment number (0-63)  
+    warning_message_segment_number = 0;  
+      
+    // Warning message segment (variable length octet string)  
+    // This would contain the actual warning message  
+    // Note: You may need to implement a custom parser for octstring  
 }; 
