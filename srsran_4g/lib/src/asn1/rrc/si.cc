@@ -2388,7 +2388,7 @@ const char* sib_type_opts::to_string() const
       "sibType9",        "sibType10",       "sibType11",       "sibType12-v920",  "sibType13-v920",   "sibType14-v1130",
       "sibType15-v1130", "sibType16-v1130", "sibType17-v1250", "sibType18-v1250", "sibType19-v1250",  "sibType20-v1310",
       "sibType21-v1430", "sibType24-v1530", "sibType25-v1530", "sibType26-v1530", "sibType26a-v1610", "sibType27-v1610",
-      "sibType28-v1610", "sibType29-v1610"};
+      "sibType28-v1610", "sibType29-v1610","sib_type33_v1700"};//sib33
   return convert_enum_idx(options, 26, value, "sib_type_e");
 }
 
@@ -3616,6 +3616,57 @@ SRSASN_CODE sib_type1_s::unpack(cbit_ref& bref)
 
   return SRSASN_SUCCESS;
 }
+
+//sib33
+// SystemInformationBlockType33 ::= SEQUENCE
+SRSASN_CODE sib_type33_s::pack(bit_ref& bref) const
+{
+  // 如果你在 si.h 有 ext，按其它 SIB 一样先 pack 扩展位
+  bref.pack(ext, 1);
+
+  // 如果有 nonCriticalExtension presence，则 pack presence 位（可选）
+  HANDLE_CODE(bref.pack(non_crit_ext_present, 1));
+
+  // 核心载荷（按你的字段来）
+  HANDLE_CODE(payload.pack(bref));
+
+  // 如果有 nonCriticalExtension 的内容，这里 pack 之
+  if (non_crit_ext_present) {
+    // HANDLE_CODE(non_crit_ext.pack(bref)); // 如果你定义了 non_crit_ext 子结构的话
+  }
+
+  return SRSASN_SUCCESS;
+}
+
+SRSASN_CODE sib_type33_s::unpack(cbit_ref& bref)
+{
+  // 与 pack 对称
+  bref.unpack(ext, 1);
+  HANDLE_CODE(bref.unpack(non_crit_ext_present, 1));
+
+  HANDLE_CODE(payload.unpack(bref));
+
+  if (non_crit_ext_present) {
+    // HANDLE_CODE(non_crit_ext.unpack(bref));
+  }
+
+  return SRSASN_SUCCESS;
+}
+
+void sib_type33_s::to_json(json_writer& j) const
+{
+  j.start_obj();
+  // 你可以按需输出
+  j.write_str("payload", payload.to_string());
+  if (non_crit_ext_present) {
+    j.write_fieldname("nonCriticalExtension");
+    j.start_obj();
+    // non_crit_ext.to_json(j); // 若你有这个结构
+    j.end_obj();
+  }
+  j.end_obj();
+}
+
 void sib_type1_s::to_json(json_writer& j) const
 {
   j.start_obj();

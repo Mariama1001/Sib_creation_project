@@ -1076,6 +1076,7 @@ struct sib_type_opts {
     sib_type27_v1610,
     sib_type28_v1610,
     sib_type29_v1610,
+    sib_type33_v1700, //sib33
     nulltype
   } value;
 
@@ -1493,6 +1494,27 @@ struct sib_type1_s {
   SRSASN_CODE unpack(cbit_ref& bref);
   void        to_json(json_writer& j) const;
 };
+//sib33
+// SystemInformationBlockType33 ::= SEQUENCE
+// 说明：这是自定义/扩展的 SIB33。这里用 dyn_octstring 作为通用载荷容器，
+// 真正字段的编解码放到 si.cc 里实现（后续我会给出 si.cc 的完整实现）。
+struct sib_type33_s {
+  // 与其它 SIB 定义保持一致的“扩展位”与“late_non_crit_ext”风格占位
+  bool          ext = false;
+
+  // 自定义负载：你可以在 si.cc 里把它编码为 OCTET STRING（透明承载）
+  dyn_octstring payload;
+
+  // 可选：保留一个 “late non-critical extension” 容器，便于后续无痛扩展
+  bool          non_crit_ext_present = false;
+  dyn_octstring late_non_crit_ext;
+
+  // 标准的三个接口，实现在 si.cc
+  SRSASN_CODE pack(bit_ref& bref) const;
+  SRSASN_CODE unpack(cbit_ref& bref);
+  void        to_json(json_writer& j) const;
+};
+
 
 } // namespace rrc
 } // namespace asn1

@@ -2144,6 +2144,18 @@ uint32_t rrc::generate_sibs()
 	        sib_info_item_c sibitem;
 	        sibitem.set_sib14_r11() = *cfg.sibs[13].sib14_r11();
 	        sib_list.push_back(sibitem);
+         } else if (mapping_enum.value == sib_type_opts::options::sib_type33_v1700) {
+          //sib33
+          // --- New condition for SIB33 ---
+         // guard against out-of-range cfg.sibs
+            if (cfg.sibs.size() > 32) {
+              sib_info_item_c sibitem;
+              // cfg.sibs[32] corresponds to SIB33 (cfg.sibs is 0-based, sib# = index+1)
+              sibitem.set_sib33() = cfg.sibs[32].sib33();
+              sib_list.push_back(sibitem);
+            } else {
+              logger.error("SIB33 configuration is missing in cfg.sibs");
+            }
         } else {
           sib_list.push_back(cfg.sibs[(int)mapping_enum + 2]);
         }
