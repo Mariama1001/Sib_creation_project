@@ -3109,6 +3109,12 @@ int parse_sibs(all_args_t* args_, rrc_cfg_t* rrc_cfg_, srsenb::phy_cfg_t* phy_co
     }
   }
 
+  // Generate SIB16 if defined in mapping info.
+  if (sib_is_present(sib1->sched_info_list, sib_type_e::sib_type16_v1130)) {
+    if (sib_sections::parse_sib16(args_->enb_files.sib_config, rrc_cfg_->sib16_segments) != SRSRAN_SUCCESS) {
+      return SRSRAN_ERROR;
+    }
+
   // Copy PHY common configuration
   phy_config_common->prach_cnfg  = sib2->rr_cfg_common.prach_cfg;
   phy_config_common->pdsch_cnfg  = sib2->rr_cfg_common.pdsch_cfg_common;
