@@ -20,7 +20,7 @@ sib1 =
             si_periodicity = 16;
 
             // comma-separated array of SIB-indexes (from 3 to 13), leave empty or commented to just scheduler sib2
-            si_mapping_info = [ 3, 11 ];
+            si_mapping_info = [ 3, 16 ];
         }
     );
     system_info_value_tag = 0;
@@ -320,4 +320,13 @@ sib11 =
     // Warning message segment (variable length octet string)  
     // This would contain the actual warning message  
     // Note: You may need to implement a custom parser for octstring  
+}; 
+
+sib16 = {  
+    time_info_r11 = {  
+        time_info_utc_r11 = 3692217600.0;  // UTC time (required)  
+        leap_seconds_r11 = 18;              // Optional  
+        local_time_offset_r11 = 0;          // Optional  
+        // day_light_saving_time_r11 is omitted  
+    };  
 }; 
