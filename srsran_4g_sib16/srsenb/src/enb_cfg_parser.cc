@@ -2899,26 +2899,22 @@ int parse_sib13(std::string filename, sib_type13_r9_s* data)
 // int parse_sib16(std::string filename, sib_type16_r11_s* data)  
 // {  
 //   parser::section sib16("sib16");  
-//   // SIB16 standard fields for GPS time (if needed)  
-//   sib16.add_field(new parser::field<uint8_t>("time_info_utc", &data->time_info_r11));  
-    
-//   return parser::parse_section(std::move(filename), &sib16);  
-// }
-// int parse_sib16(std::string filename, sib_type16_r11_s* data)  
-// {  
-//   parser::section sib16("sib16");  
     
 //   // time_info_r11 subsection  
 //   parser::section time_info("time_info_r11");  
 //   sib16.add_subsection(&time_info);  
 //   time_info.set_optional(&data->time_info_r11_present);  
     
-//   // Add fields matching the time_info_r11_s_ structure  
-//   time_info.add_field(new parser::field<uint64_t>("time_info_utc_r11", &data->time_info_r11.time_info_utc_r11));  
+//   // For uint64_t, we need to use a temporary variable and cast  
+//   // libconfig doesn't directly support uint64_t lookupValue  
+//   double temp_time_utc = 0;  
+//   time_info.add_field(new parser::field<double>("time_info_utc_r11", &temp_time_utc));  
+//   // You'll need to manually assign: data->time_info_r11.time_info_utc_r11 = (uint64_t)temp_time_utc;  
     
-//   // time_info.add_field(make_asn1_bitstring_number_parser("day_light_saving_time_r11",   
-//   //                                                        &data->time_info_r11.day_light_saving_time_r11,  
-//   //                                                        &data->time_info_r11.day_light_saving_time_r11_present));  
+//   // time_info.add_field(new field_asn1_bitstring_number<fixed_bitstring<2>, uint8_t>(  
+//   //     "day_light_saving_time_r11",   
+//   //     &data->time_info_r11.day_light_saving_time_r11,  
+//   //     &data->time_info_r11.day_light_saving_time_r11_present));  
     
 //   time_info.add_field(new parser::field<int16_t>("leap_seconds_r11",   
 //                                                   &data->time_info_r11.leap_seconds_r11,  
@@ -2930,35 +2926,42 @@ int parse_sib13(std::string filename, sib_type13_r9_s* data)
     
 //   return parser::parse_section(std::move(filename), &sib16);  
 // }
-int parse_sib16(std::string filename, sib_type16_r11_s* data)  
-{  
-  parser::section sib16("sib16");  
+int parse_sib16(std::string filename, sib_type16_r11_s* data)    
+{    
+  parser::section sib16("sib16");    
+      
+  // time_info_r11 subsection    
+  parser::section time_info("time_info_r11");    
+  sib16.add_subsection(&time_info);    
+  time_info.set_optional(&data->time_info_r11_present);    
+      
+  // For uint64_t, we need to use a temporary variable and cast    
+  // libconfig doesn't directly support uint64_t lookupValue    
+  double temp_time_utc = 0;    
+  time_info.add_field(new parser::field<double>("time_info_utc_r11", &temp_time_utc));    
+      
+  time_info.add_field(new field_asn1_bitstring_number<fixed_bitstring<2>, uint8_t>(    
+      "day_light_saving_time_r11",     
+      &data->time_info_r11.day_light_saving_time_r11,    
+      &data->time_info_r11.day_light_saving_time_r11_present));    
+      
+  time_info.add_field(new parser::field<int16_t>("leap_seconds_r11",     
+                                                  &data->time_info_r11.leap_seconds_r11,    
+                                                  &data->time_info_r11.leap_seconds_r11_present));    
+      
+  time_info.add_field(new parser::field<int8_t>("local_time_offset_r11",     
+                                                 &data->time_info_r11.local_time_offset_r11,    
+                                                 &data->time_info_r11.local_time_offset_r11_present));    
+      
+  // Parse the configuration file  
+  int result = parser::parse_section(std::move(filename), &sib16);  
     
-  // time_info_r11 subsection  
-  parser::section time_info("time_info_r11");  
-  sib16.add_subsection(&time_info);  
-  time_info.set_optional(&data->time_info_r11_present);  
+  // CRITICAL: Manually assign the temp variable to the actual field  
+  if (result == 0) {  
+    data->time_info_r11.time_info_utc_r11 = (uint64_t)temp_time_utc;  
+  }  
     
-  // For uint64_t, we need to use a temporary variable and cast  
-  // libconfig doesn't directly support uint64_t lookupValue  
-  double temp_time_utc = 0;  
-  time_info.add_field(new parser::field<double>("time_info_utc_r11", &temp_time_utc));  
-  // You'll need to manually assign: data->time_info_r11.time_info_utc_r11 = (uint64_t)temp_time_utc;  
-    
-  // time_info.add_field(new field_asn1_bitstring_number<fixed_bitstring<2>, uint8_t>(  
-  //     "day_light_saving_time_r11",   
-  //     &data->time_info_r11.day_light_saving_time_r11,  
-  //     &data->time_info_r11.day_light_saving_time_r11_present));  
-    
-  time_info.add_field(new parser::field<int16_t>("leap_seconds_r11",   
-                                                  &data->time_info_r11.leap_seconds_r11,  
-                                                  &data->time_info_r11.leap_seconds_r11_present));  
-    
-  time_info.add_field(new parser::field<int8_t>("local_time_offset_r11",   
-                                                 &data->time_info_r11.local_time_offset_r11,  
-                                                 &data->time_info_r11.local_time_offset_r11_present));  
-    
-  return parser::parse_section(std::move(filename), &sib16);  
+  return result;  
 }
 
 int parse_sibs(all_args_t* args_, rrc_cfg_t* rrc_cfg_, srsenb::phy_cfg_t* phy_config_common)
