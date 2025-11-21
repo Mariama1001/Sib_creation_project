@@ -2940,10 +2940,10 @@ int parse_sib16(std::string filename, sib_type16_r11_s* data)
   double temp_time_utc = 0;    
   time_info.add_field(new parser::field<double>("time_info_utc_r11", &temp_time_utc));    
       
-  time_info.add_field(new field_asn1_bitstring_number<fixed_bitstring<2>, uint8_t>(    
-      "day_light_saving_time_r11",     
-      &data->time_info_r11.day_light_saving_time_r11,    
-      &data->time_info_r11.day_light_saving_time_r11_present));    
+  // time_info.add_field(new field_asn1_bitstring_number<fixed_bitstring<2>, uint8_t>(    
+  //     "day_light_saving_time_r11",     
+  //     &data->time_info_r11.day_light_saving_time_r11,    
+  //     &data->time_info_r11.day_light_saving_time_r11_present));    
       
   time_info.add_field(new parser::field<int16_t>("leap_seconds_r11",     
                                                   &data->time_info_r11.leap_seconds_r11,    
